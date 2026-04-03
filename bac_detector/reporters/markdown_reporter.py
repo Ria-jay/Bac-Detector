@@ -315,7 +315,7 @@ def _render_finding_full(finding: Finding, index: int) -> str:
         "|---|---|",
         f"| **Severity** | {sev_label} |",
         f"| **Confidence** | {conf_label} |",
-        f"| **Category** | {_CATEGORY_LABEL.get(finding.category, f"`{finding.category}`")} |",
+        "| **Category** | " + _CATEGORY_LABEL.get(finding.category, f"`{finding.category}`") + " |",
         f"| **Endpoint** | `{finding.endpoint_key}` |",
         f"| **Method** | `{finding.http_method}` |",
         f"| **Attacker identity** | `{finding.evidence.attacker_identity}` |",

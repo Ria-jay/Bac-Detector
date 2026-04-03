@@ -6,25 +6,23 @@ horizontal escalation detection, confidence scoring, finding
 deduplication, and finding sort order.
 """
 
-import pytest
 
 from bac_detector.analyzers.baseline import Baseline
 from bac_detector.analyzers.matrix import AuthMatrix, build_matrix
+from bac_detector.comparators.response import compare_responses
 from bac_detector.detectors.confidence import (
-    score_idor_confidence,
     score_escalation_confidence,
+    score_idor_confidence,
+)
+from bac_detector.detectors.escalation import (
+    detect_horizontal_escalation,
+    detect_vertical_escalation,
 )
 from bac_detector.detectors.idor import detect_idor
-from bac_detector.detectors.escalation import (
-    detect_vertical_escalation,
-    detect_horizontal_escalation,
-)
-from bac_detector.detectors.runner import run_detection, _deduplicate, _sort_findings
+from bac_detector.detectors.runner import _deduplicate, _sort_findings, run_detection
 from bac_detector.models.finding import Confidence, Finding, Severity
 from bac_detector.models.identity import AuthMechanism, IdentityProfile
 from bac_detector.models.response_meta import ResponseMeta
-from bac_detector.comparators.response import compare_responses
-
 
 # ---------------------------------------------------------------------------
 # Helpers

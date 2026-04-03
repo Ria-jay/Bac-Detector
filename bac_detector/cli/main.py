@@ -15,9 +15,8 @@ Usage:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich import box
@@ -77,7 +76,7 @@ def _print_authorized_use_banner() -> None:
     )
 
 
-def _require(value: Optional[str], flag: str) -> str:
+def _require(value: str | None, flag: str) -> str:
     """Exit with a clean error if a required option was not supplied."""
     if not value:
         err_console.print(
@@ -94,14 +93,14 @@ def _require(value: Optional[str], flag: str) -> str:
 
 @app.command()
 def scan(
-    config_path: Optional[str] = typer.Option(
+    config_path: str | None = typer.Option(
         None,
         "--config",
         "-c",
         help="Path to YAML configuration file.",
         show_default=False,
     ),
-    output_dir: Optional[str] = typer.Option(
+    output_dir: str | None = typer.Option(
         None,
         "--output-dir",
         "-o",
@@ -137,7 +136,7 @@ def scan(
         config.safety.dry_run = True
 
     scan_id = str(uuid.uuid4())
-    started_at = datetime.now(timezone.utc)
+    started_at = datetime.now(UTC)
 
     console.print(f"\n[bold]Target:[/bold] {config.target.base_url}")
     console.print(f"[bold]Identities:[/bold] {', '.join(i.name for i in config.identities)}")
@@ -182,9 +181,9 @@ def scan(
     )
 
     # --- Phase 3: Replay ---
-    from bac_detector.replay.runner import run_replay
-    from bac_detector.analyzers.matrix import build_matrix
     from bac_detector.analyzers.baseline import build_baselines
+    from bac_detector.analyzers.matrix import build_matrix
+    from bac_detector.replay.runner import run_replay
 
     console.print(
         f"[bold]Replaying[/bold] across {len(config.identities)} identities "
@@ -199,7 +198,7 @@ def scan(
     console.print(
         f"[green]Replay complete:[/green] {replay_summary.total_sent} requests sent"
         + (f", {replay_summary.total_errors} errors" if replay_summary.total_errors else "")
-        + (f" [yellow](budget exhausted)[/yellow]" if replay_summary.budget_exhausted else "")
+        + (" [yellow](budget exhausted)[/yellow]" if replay_summary.budget_exhausted else "")
     )
 
     # --- Phase 4: Detection ---
@@ -246,7 +245,7 @@ def scan(
         target=config.target.base_url,
         status=ScanStatus.COMPLETED,
         started_at=started_at,
-        finished_at=datetime.now(timezone.utc),
+        finished_at=datetime.now(UTC),
         endpoints_discovered=inventory.total,
         discovery_sources_used=inventory.sources_used,
         endpoints=[ep.model_dump() for ep in inventory.endpoints],
@@ -287,14 +286,14 @@ def scan(
 
 @app.command()
 def discover(
-    config_path: Optional[str] = typer.Option(
+    config_path: str | None = typer.Option(
         None,
         "--config",
         "-c",
         help="Path to YAML configuration file.",
         show_default=False,
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -366,7 +365,7 @@ def discover(
 
 @app.command()
 def report(
-    input_path: Optional[str] = typer.Option(
+    input_path: str | None = typer.Option(
         None,
         "--input",
         "-i",
@@ -379,7 +378,7 @@ def report(
         "-f",
         help="Output format: 'md' (Markdown) or 'terminal'.",
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -449,14 +448,18 @@ def validate_demo() -> None:
 
     import uvicorn
 
-    from bac_detector.config.loader import (
-        IdentityConfig, OutputConfig, SafetyConfig, TargetConfig, ThrottleConfig,
-    )
-    from bac_detector.models.identity import AuthMechanism
     from bac_detector.analyzers.baseline import build_baselines
     from bac_detector.analyzers.matrix import build_matrix
+    from bac_detector.config.loader import (
+        IdentityConfig,
+        OutputConfig,
+        SafetyConfig,
+        TargetConfig,
+        ThrottleConfig,
+    )
     from bac_detector.detectors.runner import run_detection
     from bac_detector.discovery.runner import run_discovery
+    from bac_detector.models.identity import AuthMechanism
     from bac_detector.replay.runner import run_replay
 
     # ── Find a free port ────────────────────────────────────────────────────
@@ -535,8 +538,8 @@ def validate_demo() -> None:
         scan_id="validate-demo",
         target=base_url,
         status=ScanStatus.COMPLETED,
-        started_at=datetime.now(timezone.utc),
-        finished_at=datetime.now(timezone.utc),
+        started_at=datetime.now(UTC),
+        finished_at=datetime.now(UTC),
         endpoints_discovered=inventory.total,
         identities_tested=[i.name for i in config.identities],
         findings=findings,

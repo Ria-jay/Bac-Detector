@@ -17,17 +17,14 @@ import yaml
 
 from bac_detector.discovery.openapi_parser import (
     _detect_version,
-    _extract_example,
     _merge_parameters,
     _parse_openapi3,
-    _parse_parameters_openapi3,
     _parse_request_body_openapi3,
     _parse_swagger2,
     _resolve_ref,
     parse_openapi,
 )
 from bac_detector.models.endpoint import HttpMethod, ParameterLocation
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

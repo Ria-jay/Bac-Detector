@@ -31,8 +31,8 @@ from bac_detector.graph.models import (
     AccessOutcome,
     ActionType,
     AuthGraph,
-    OwnershipConfidence,
     OwnershipConclusion,
+    OwnershipConfidence,
 )
 from bac_detector.models.finding import (
     Confidence,
@@ -240,9 +240,6 @@ def analyze_child_resource_exposure(graph: AuthGraph) -> list[Finding]:
                                 f"{ac.status_code} (allowed) for identity '{identity_name}'."
                             ),
                         )
-
-                        child_suffix = child_ep.split(parent_ep.split("{")[0], 1)[-1] \
-                            if parent_ep.split("{")[0] in child_ep else child_ep
 
                         findings.append(Finding(
                             title=(
@@ -694,7 +691,6 @@ def analyze_partial_authorization(graph: AuthGraph) -> list[Finding]:
             severity = Severity.HIGH if allowed_ratio >= 0.5 else Severity.MEDIUM
 
             sample_allowed = allowed_eps[0]
-            sample_denied = denied_eps[0]
             sample_edge = (graph.edges_for_identity_endpoint(identity_name, sample_allowed) or [None])[0]
 
             evidence = _make_evidence(

@@ -10,11 +10,10 @@ from pathlib import Path
 import pytest
 
 from bac_detector.discovery.endpoint_list import (
+    _infer_path_parameters,
+    _normalise_param_styles,
     parse_endpoint_list,
     parse_endpoint_list_text,
-    _normalise_param_styles,
-    _infer_path_parameters,
-    _parse_line,
 )
 from bac_detector.models.endpoint import HttpMethod, ParameterLocation
 

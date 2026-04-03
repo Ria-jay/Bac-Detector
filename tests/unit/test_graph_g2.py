@@ -12,16 +12,13 @@ Covers:
 
 from __future__ import annotations
 
-import pytest
-
 from bac_detector.graph.inference import (
-    _extract_field_values,
     _ALL_OWNERSHIP_FIELDS,
     _TENANT_FIELDS,
-    apply_inferences,
+    _extract_field_values,
     infer_ownership_for_edge,
-    infer_tenant_for_edge,
     infer_parent_child_resources,
+    infer_tenant_for_edge,
 )
 from bac_detector.graph.models import (
     AccessEdge,
@@ -30,14 +27,11 @@ from bac_detector.graph.models import (
     AuthGraph,
     EndpointNode,
     IdentityNode,
-    OwnershipConfidence,
     OwnershipConclusion,
-    OwnershipInference,
+    OwnershipConfidence,
     ResourceKey,
     ResourceNode,
-    TenantInference,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -412,10 +406,10 @@ class TestApplyInferences:
         """Build a graph with both ownership and tenant signals."""
         from bac_detector.analyzers.matrix import build_matrix
         from bac_detector.discovery.inventory import build_inventory
+        from bac_detector.graph.builder import build_graph
         from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
         from bac_detector.models.identity import AuthMechanism, IdentityProfile
         from bac_detector.models.response_meta import ResponseMeta
-        from bac_detector.graph.builder import build_graph
 
         ep = Endpoint(
             method=HttpMethod.GET,

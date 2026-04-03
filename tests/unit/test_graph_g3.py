@@ -28,8 +28,8 @@ from bac_detector.graph.models import (
     AuthGraph,
     EndpointNode,
     IdentityNode,
-    OwnershipConfidence,
     OwnershipConclusion,
+    OwnershipConfidence,
     OwnershipInference,
     ResourceFamily,
     ResourceKey,
@@ -39,7 +39,6 @@ from bac_detector.graph.models import (
 )
 from bac_detector.graph.service import run_graph_analysis
 from bac_detector.models.finding import Confidence, Finding, Severity
-
 
 # ---------------------------------------------------------------------------
 # Graph construction helpers
@@ -753,14 +752,15 @@ class TestGraphAnalysisConfig:
             assert cfg.min_confidence == val
 
     def test_invalid_min_confidence_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             GraphAnalysisConfig(min_confidence="critical")
 
     def test_yaml_round_trip(self):
         """GraphAnalysisConfig should survive YAML → ScanConfig validation."""
-        import yaml
+        import os
+        import tempfile
+
         from bac_detector.config.loader import load_config
-        import tempfile, os
         config_yaml = """
 target:
   base_url: "https://example.com"

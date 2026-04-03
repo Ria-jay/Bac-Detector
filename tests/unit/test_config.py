@@ -10,8 +10,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from bac_detector.config.loader import ScanConfig, load_config
-
+from bac_detector.config.loader import load_config
 
 # ---------------------------------------------------------------------------
 # Fixtures

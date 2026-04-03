@@ -27,7 +27,6 @@ from bac_detector.config.loader import (
 )
 from bac_detector.models.identity import AuthMechanism
 
-
 # ---------------------------------------------------------------------------
 # Free-port helper
 # ---------------------------------------------------------------------------

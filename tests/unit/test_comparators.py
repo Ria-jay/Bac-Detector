@@ -5,16 +5,13 @@ Tests cover ResponseDiff construction, suspicious-flag logic,
 equivalence detection, and non-determinism heuristic.
 """
 
-import pytest
 
 from bac_detector.comparators.response import (
-    ResponseDiff,
     compare_responses,
     is_likely_nondeterministic,
     responses_look_equivalent,
 )
 from bac_detector.models.response_meta import ResponseMeta
-
 
 # ---------------------------------------------------------------------------
 # Helpers

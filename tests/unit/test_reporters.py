@@ -13,17 +13,16 @@ from pathlib import Path
 
 import pytest
 
+from bac_detector.config.loader import OutputConfig
 from bac_detector.models.finding import Confidence, Evidence, Finding, Severity
 from bac_detector.models.scan_result import ScanResult, ScanStatus
 from bac_detector.reporters.json_reporter import (
-    write_json_report,
-    load_scan_result,
     _build_payload,
+    load_scan_result,
+    write_json_report,
 )
 from bac_detector.reporters.markdown_reporter import build_markdown_report
-from bac_detector.reporters.writer import ReportPaths, _safe_path, write_all_reports
-from bac_detector.config.loader import OutputConfig
-
+from bac_detector.reporters.writer import _safe_path, write_all_reports
 
 # ---------------------------------------------------------------------------
 # Fixtures

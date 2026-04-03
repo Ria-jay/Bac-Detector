@@ -11,8 +11,6 @@ Covers:
 
 from __future__ import annotations
 
-import pytest
-
 from bac_detector.graph.inference import (
     group_into_families,
     infer_action,
@@ -22,10 +20,7 @@ from bac_detector.graph.inference import (
 from bac_detector.graph.models import (
     AccessOutcome,
     ActionType,
-    AuthGraph,
-    ResourceKey,
 )
-
 
 # ---------------------------------------------------------------------------
 # Action inference
@@ -269,7 +264,6 @@ class TestBuildGraph:
     def _make_matrix_and_inventory(self):
         """Build minimal matrix + inventory for builder testing."""
         from bac_detector.analyzers.matrix import build_matrix
-        from bac_detector.analyzers.baseline import build_baselines
         from bac_detector.discovery.inventory import build_inventory
         from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
         from bac_detector.models.identity import AuthMechanism, IdentityProfile

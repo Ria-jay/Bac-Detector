@@ -5,15 +5,12 @@ Tests cover matrix recording, querying, status summary, baseline
 extraction from ownership, and edge cases.
 """
 
-from datetime import datetime
 
-import pytest
 
-from bac_detector.analyzers.baseline import Baseline, build_baselines
+from bac_detector.analyzers.baseline import build_baselines
 from bac_detector.analyzers.matrix import AuthMatrix, build_matrix
 from bac_detector.models.identity import AuthMechanism, IdentityProfile
 from bac_detector.models.response_meta import ResponseMeta
-
 
 # ---------------------------------------------------------------------------
 # Helpers

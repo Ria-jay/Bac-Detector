@@ -89,7 +89,7 @@ def build_graph(
 
     # Step 6: mark child endpoints
     parent_child = infer_parent_child(ep_keys)
-    for child_ep, parent_ep in parent_child.items():
+    for child_ep, _ in parent_child.items():
         if child_ep in graph.endpoints:
             graph.endpoints[child_ep].is_child_endpoint = True
 

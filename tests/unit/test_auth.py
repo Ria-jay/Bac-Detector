@@ -6,7 +6,6 @@ These tests moved here from test_models.py when auth logic was
 consolidated into auth/profiles.py as the single source of truth.
 """
 
-import pytest
 
 from bac_detector.auth.profiles import build_request_cookies, build_request_headers
 from bac_detector.models.identity import AuthMechanism, IdentityProfile

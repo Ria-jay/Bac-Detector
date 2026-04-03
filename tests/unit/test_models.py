@@ -11,9 +11,8 @@ from pydantic import ValidationError
 from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
 from bac_detector.models.finding import Confidence, Evidence, Finding, Severity
 from bac_detector.models.identity import AuthMechanism, IdentityProfile
-from bac_detector.models.response_meta import ResponseMeta, _hash_body, _extract_json_keys
+from bac_detector.models.response_meta import ResponseMeta, _extract_json_keys, _hash_body
 from bac_detector.models.scan_result import ScanResult, ScanStatus
-
 
 # ---------------------------------------------------------------------------
 # Endpoint model
@@ -163,7 +162,7 @@ class TestIdentityProfile:
             role="user",
             auth_mechanism=AuthMechanism.NONE,
         )
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, TypeError)):
             identity.name = "bob"  # type: ignore[misc]
 
 

@@ -25,21 +25,19 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Optional
 
 from bac_detector.graph.models import (
     AccessEdge,
     AccessOutcome,
     ActionType,
     AuthGraph,
-    OwnershipConfidence,
     OwnershipConclusion,
+    OwnershipConfidence,
     OwnershipInference,
     ResourceFamily,
     ResourceKey,
     TenantInference,
 )
-
 
 # ---------------------------------------------------------------------------
 # 1. Action inference  (G1 — unchanged)
@@ -143,11 +141,11 @@ _RESOURCE_TYPE_FROM_PATH_RE = re.compile(
 
 def normalize_resource(
     endpoint_key: str,
-    object_id: Optional[str],
+    object_id: str | None,
     *,
-    parent_key: Optional[str] = None,
-    tenant_id: Optional[str] = None,
-) -> Optional[ResourceKey]:
+    parent_key: str | None = None,
+    tenant_id: str | None = None,
+) -> ResourceKey | None:
     """
     Produce a canonical ResourceKey for a (endpoint, object_id) pair.
 
@@ -174,7 +172,7 @@ def normalize_resource(
 _VERSION_SEGMENT_RE = re.compile(r"^v\d+$", re.IGNORECASE)
 
 
-def _infer_resource_type(path: str) -> Optional[str]:
+def _infer_resource_type(path: str) -> str | None:
     """
     Extract the resource type from the path segment immediately before the
     first object-id placeholder, skipping API version segments like v1, v2.
@@ -192,7 +190,7 @@ def _infer_resource_type(path: str) -> Optional[str]:
     return None
 
 
-def _fallback_resource_type(path: str) -> Optional[str]:
+def _fallback_resource_type(path: str) -> str | None:
     """Fallback: return the last non-placeholder, non-version path segment."""
     segments = path.strip("/").split("/")
     for seg in reversed(segments):
@@ -226,7 +224,7 @@ def group_into_families(endpoint_keys: list[str]) -> list[ResourceFamily]:
         families[resource_type][2].append(ep_key)
 
     result: list[ResourceFamily] = []
-    for resource_type, (rt, root_path, ep_keys) in families.items():
+    for resource_type, (_, root_path, ep_keys) in families.items():
         parent_keys = []
         child_keys = []
         for ep_key in ep_keys:
@@ -248,11 +246,11 @@ def group_into_families(endpoint_keys: list[str]) -> list[ResourceFamily]:
     return result
 
 
-def _extract_family_root(path: str) -> tuple[str, Optional[str]]:
+def _extract_family_root(path: str) -> tuple[str, str | None]:
     """Return (root_path, resource_type) for a path, or ("", None) if ungroupable."""
     segments = path.strip("/").split("/")
     prefix_segs: list[str] = []
-    resource_type: Optional[str] = None
+    resource_type: str | None = None
 
     for seg in segments:
         if seg.startswith("{"):
@@ -316,7 +314,7 @@ def infer_parent_child(endpoint_keys: list[str]) -> dict[str, str]:
     return result
 
 
-def _path_up_to_first_placeholder(path: str) -> Optional[str]:
+def _path_up_to_first_placeholder(path: str) -> str | None:
     """Return the path prefix including the first {placeholder} segment."""
     segments = path.strip("/").split("/")
     collected: list[str] = []
@@ -412,7 +410,7 @@ def _extract_field_values(body_snippet: str, fields: frozenset[str]) -> dict[str
             for field in fields:
                 if field in parsed:
                     v = parsed[field]
-                    if isinstance(v, (str, int, float)) and v is not None:
+                    if isinstance(v, str | int | float) and v is not None:
                         result[field] = str(v)
             return result
     except (json.JSONDecodeError, ValueError):
@@ -443,7 +441,7 @@ def _extract_field_values(body_snippet: str, fields: frozenset[str]) -> dict[str
 def infer_ownership_for_edge(
     edge: AccessEdge,
     principal_ids: set[str],
-) -> Optional[OwnershipInference]:
+) -> OwnershipInference | None:
     """
     Infer whether the identity that made this access likely owns the resource.
 
@@ -601,7 +599,7 @@ def infer_ownership_for_edge(
 # ---------------------------------------------------------------------------
 
 
-def infer_tenant_for_edge(edge: AccessEdge) -> Optional[TenantInference]:
+def infer_tenant_for_edge(edge: AccessEdge) -> TenantInference | None:
     """
     Infer the tenant scope of the resource from a successful response.
 
@@ -722,7 +720,7 @@ def infer_parent_child_resources(graph: AuthGraph) -> None:
                         node.parent_resource_key = parent_rk_str
 
 
-def _child_type_from_path(path: str) -> Optional[str]:
+def _child_type_from_path(path: str) -> str | None:
     """
     Extract the child resource type from a child endpoint path.
 

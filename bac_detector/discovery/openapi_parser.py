@@ -14,7 +14,6 @@ including path, query, and request-body parameter hints.
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -22,7 +21,6 @@ from urllib.parse import urlparse
 import yaml
 
 from bac_detector.models.endpoint import (
-    DiscoverySource,
     Endpoint,
     HttpMethod,
     Parameter,
@@ -36,7 +34,7 @@ log = get_logger(__name__)
 # HTTP methods that appear as keys inside OpenAPI path items
 _OPENAPI_METHODS = {"get", "post", "put", "patch", "delete", "head", "options"}
 
-# Map from string -> HttpMethod, lowercased
+# Map from lowercase string -> HttpMethod enum
 _METHOD_MAP: dict[str, HttpMethod] = {m.value.lower(): m for m in HttpMethod}
 
 
@@ -99,15 +97,15 @@ def _load_local_spec(path_str: str) -> dict[str, Any]:
         raise FileNotFoundError(f"OpenAPI spec file not found: {path}")
 
     text = path.read_text(encoding="utf-8")
-    return _parse_spec_text(text, hint=path.suffix)
+    return _parse_spec_text(text)
 
 
 def _fetch_remote_spec(url: str) -> dict[str, Any]:
     """
-    Fetch a remote spec over HTTP using httpx synchronous client.
+    Fetch a remote spec over HTTP using the httpx synchronous client.
 
-    We use the sync client here because discovery runs before the async
-    replay engine is started — keeping it simple and predictable.
+    Sync is deliberate here — discovery runs before the async replay engine
+    starts, keeping the code simple and avoiding event-loop concerns.
     """
     import httpx
 
@@ -123,16 +121,15 @@ def _fetch_remote_spec(url: str) -> dict[str, Any]:
     except httpx.HTTPError as exc:
         raise ValueError(f"Failed to fetch OpenAPI spec from {url!r}: {exc}") from exc
 
-    content_type = response.headers.get("content-type", "")
-    hint = ".yaml" if "yaml" in content_type else ".json"
-    return _parse_spec_text(response.text, hint=hint)
+    return _parse_spec_text(response.text)
 
 
-def _parse_spec_text(text: str, hint: str = ".json") -> dict[str, Any]:
+def _parse_spec_text(text: str) -> dict[str, Any]:
     """
-    Parse a spec string as JSON or YAML.
+    Parse a spec string as JSON, falling back to YAML.
 
-    Tries JSON first; falls back to YAML (which also handles JSON).
+    YAML is a superset of JSON so the yaml parser handles both, but
+    trying json.loads first is faster for the common JSON case.
     """
     try:
         result = json.loads(text)
@@ -148,26 +145,24 @@ def _parse_spec_text(text: str, hint: str = ".json") -> dict[str, Any]:
     except yaml.YAMLError as exc:
         raise ValueError(f"Failed to parse spec as JSON or YAML: {exc}") from exc
 
-    raise ValueError("Spec parsed but is not a JSON/YAML object (dict)")
+    raise ValueError("Spec parsed but top-level value is not a JSON/YAML object")
 
 
 def _detect_version(raw: dict[str, Any]) -> str:
     """
     Detect whether a spec is OpenAPI 3.x or Swagger 2.0.
 
-    Returns a version string like "3.0", "3.1", or "2.0".
+    Returns a version string like "3.0.3", "3.1.0", or "2.0".
     """
-    # OpenAPI 3.x uses the "openapi" key
     openapi_key = raw.get("openapi", "")
     if isinstance(openapi_key, str) and openapi_key.startswith("3."):
         return openapi_key
 
-    # Swagger 2.0 uses the "swagger" key
     swagger_key = raw.get("swagger", "")
     if isinstance(swagger_key, str) and swagger_key.startswith("2."):
         return swagger_key
 
-    # Some specs omit the version — treat as OpenAPI 3.0 if "paths" exists
+    # Some specs omit the version key — fall back if "paths" exists
     if "paths" in raw:
         log.warning("openapi_version_not_detected", fallback="3.0")
         return "3.0"
@@ -185,16 +180,17 @@ def _detect_version(raw: dict[str, Any]) -> str:
 def _parse_openapi3(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
     """Parse an OpenAPI 3.x spec into Endpoint objects."""
     endpoints: list[Endpoint] = []
-    paths: dict[str, Any] = raw.get("paths", {})
-    components = raw.get("components", {})
+    # Guard against specs that have `paths: null`
+    paths: dict[str, Any] = raw.get("paths") or {}
+    components: dict[str, Any] = raw.get("components") or {}
 
     for path, path_item in paths.items():
         if not isinstance(path_item, dict):
             continue
 
-        # Path-level parameters apply to all operations in this path
+        # Path-level parameters apply to all operations under this path
         path_level_params = _parse_parameters_openapi3(
-            path_item.get("parameters", []), components
+            path_item.get("parameters") or [], components
         )
 
         for method_str, operation in path_item.items():
@@ -207,16 +203,15 @@ def _parse_openapi3(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
             if http_method is None:
                 continue
 
-            # Merge path-level and operation-level parameters
-            # Operation-level params override path-level with same name+in
+            # Operation-level params override path-level params with same name+in
             op_params = _parse_parameters_openapi3(
-                operation.get("parameters", []), components
+                operation.get("parameters") or [], components
             )
             merged_params = _merge_parameters(path_level_params, op_params)
 
-            # Extract request body parameter hints
+            # Extract request body parameter hints (object-ID fields only)
             body_params = _parse_request_body_openapi3(
-                operation.get("requestBody", {}), components
+                operation.get("requestBody") or {}, components
             )
             all_params = merged_params + body_params
 
@@ -226,7 +221,7 @@ def _parse_openapi3(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
                 base_url=base_url,
                 parameters=all_params,
                 source="openapi",
-                tags=operation.get("tags", []),
+                tags=operation.get("tags") or [],
                 summary=operation.get("summary") or operation.get("operationId"),
             )
             endpoints.append(endpoint)
@@ -237,24 +232,28 @@ def _parse_openapi3(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
 def _parse_parameters_openapi3(
     params_raw: list[Any], components: dict[str, Any]
 ) -> list[Parameter]:
-    """Parse an OpenAPI 3.x parameters array."""
+    """Parse an OpenAPI 3.x parameters array into Parameter objects."""
     result: list[Parameter] = []
     for raw_param in params_raw:
         if not isinstance(raw_param, dict):
             continue
 
-        # Resolve $ref if present
         raw_param = _resolve_ref(raw_param, components, "parameters")
 
         name = raw_param.get("name", "")
+        if not name:
+            # Skip parameters with missing or empty names
+            continue
+
         location_str = raw_param.get("in", "")
         required = bool(raw_param.get("required", False))
 
         location = _parse_location(location_str)
         if location is None:
-            continue  # skip unsupported locations like "cookie" at MVP
+            # Skip unsupported locations (e.g. "cookie") at MVP
+            continue
 
-        schema = raw_param.get("schema", {})
+        schema = raw_param.get("schema") or {}
         schema_type = schema.get("type") if isinstance(schema, dict) else None
         example = _extract_example(raw_param, schema)
 
@@ -275,24 +274,23 @@ def _parse_request_body_openapi3(
     request_body: dict[str, Any], components: dict[str, Any]
 ) -> list[Parameter]:
     """
-    Extract top-level JSON body property names from a requestBody.
+    Extract object-ID property names from a requestBody schema.
 
-    We don't recurse into nested schemas — only grab top-level properties
-    that look like object identifiers (e.g. user_id, order_id).
+    Only inspects top-level JSON properties that look like object identifiers.
+    Does not recurse into nested schemas — focused on BAC-relevant fields only.
     """
     if not request_body:
         return []
 
     request_body = _resolve_ref(request_body, components, "requestBodies")
-    content = request_body.get("content", {})
+    content = request_body.get("content") or {}
 
-    # Prefer application/json
-    json_content = content.get("application/json", {})
-    schema = json_content.get("schema", {})
+    # Prefer application/json; fall back to the first available content type
+    json_content = content.get("application/json") or {}
+    schema = json_content.get("schema") or {}
     if not schema:
-        # Try the first available content type
         for ct_schema in content.values():
-            schema = ct_schema.get("schema", {})
+            schema = ct_schema.get("schema") or {}
             if schema:
                 break
 
@@ -311,19 +309,15 @@ def _parse_request_body_openapi3(
 def _parse_swagger2(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
     """Parse a Swagger 2.0 spec into Endpoint objects."""
     endpoints: list[Endpoint] = []
-    paths: dict[str, Any] = raw.get("paths", {})
-    definitions = raw.get("definitions", {})
-
-    # Swagger 2.0 uses a flat "definitions" key, not "components/schemas"
-    # We wrap it in a components-shaped dict for reuse of helper functions
-    components = {"schemas": definitions}
+    paths: dict[str, Any] = raw.get("paths") or {}
+    definitions: dict[str, Any] = raw.get("definitions") or {}
 
     for path, path_item in paths.items():
         if not isinstance(path_item, dict):
             continue
 
         path_level_params = _parse_parameters_swagger2(
-            path_item.get("parameters", []), definitions
+            path_item.get("parameters") or [], definitions
         )
 
         for method_str, operation in path_item.items():
@@ -337,7 +331,7 @@ def _parse_swagger2(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
                 continue
 
             op_params = _parse_parameters_swagger2(
-                operation.get("parameters", []), definitions
+                operation.get("parameters") or [], definitions
             )
             merged_params = _merge_parameters(path_level_params, op_params)
 
@@ -347,7 +341,7 @@ def _parse_swagger2(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
                 base_url=base_url,
                 parameters=merged_params,
                 source="openapi",
-                tags=operation.get("tags", []),
+                tags=operation.get("tags") or [],
                 summary=operation.get("summary") or operation.get("operationId"),
             )
             endpoints.append(endpoint)
@@ -358,7 +352,7 @@ def _parse_swagger2(raw: dict[str, Any], base_url: str) -> list[Endpoint]:
 def _parse_parameters_swagger2(
     params_raw: list[Any], definitions: dict[str, Any]
 ) -> list[Parameter]:
-    """Parse a Swagger 2.0 parameters array."""
+    """Parse a Swagger 2.0 parameters array into Parameter objects."""
     result: list[Parameter] = []
     components = {"schemas": definitions}
 
@@ -369,15 +363,16 @@ def _parse_parameters_swagger2(
         raw_param = _resolve_ref(raw_param, components, "parameters")
 
         name = raw_param.get("name", "")
+        if not name:
+            continue
+
         location_str = raw_param.get("in", "")
         required = bool(raw_param.get("required", False))
 
         if location_str == "body":
-            # Swagger 2.0 body params — extract schema properties
-            schema = raw_param.get("schema", {})
-            schema = _resolve_ref(schema, components, "schemas")
-            body_params = _params_from_schema(schema, components)
-            result.extend(body_params)
+            # Swagger 2.0 body param — extract object-ID schema properties
+            schema = _resolve_ref(raw_param.get("schema") or {}, components, "schemas")
+            result.extend(_params_from_schema(schema, components))
             continue
 
         location = _parse_location(location_str)
@@ -411,9 +406,8 @@ def _params_from_schema(
     """
     Extract body Parameter hints from a JSON schema object.
 
-    Only inspects top-level properties. Skips arrays and primitives.
-    Only emits parameters whose names look like object identifiers to
-    keep the list focused on BAC-relevant fields.
+    Only inspects top-level properties and only emits parameters whose names
+    look like object identifiers, keeping the list focused on BAC-relevant fields.
     """
     if not isinstance(schema, dict):
         return []
@@ -422,11 +416,10 @@ def _params_from_schema(
     properties: dict[str, Any] = {}
 
     if schema_type == "object" or "properties" in schema:
-        properties = schema.get("properties", {})
+        properties = schema.get("properties") or {}
     elif schema_type == "array":
-        items = schema.get("items", {})
-        items = _resolve_ref(items, components, "schemas")
-        properties = items.get("properties", {}) if isinstance(items, dict) else {}
+        items = _resolve_ref(schema.get("items") or {}, components, "schemas")
+        properties = items.get("properties") or {} if isinstance(items, dict) else {}
 
     result = []
     for prop_name, prop_schema in properties.items():
@@ -455,52 +448,50 @@ def _resolve_ref(
     section: str,
 ) -> dict[str, Any]:
     """
-    Resolve a $ref pointer one level deep.
+    Resolve a JSON Reference ($ref) one level deep.
 
     Only handles local #/components/... and #/definitions/... refs.
-    Does not recurse into nested refs — that level of complexity is
-    not required for MVP BAC detection.
+    Does not recurse — nested refs are left as-is (acceptable at MVP).
 
     Args:
         obj: The object that may contain a "$ref" key.
         components: The components/definitions dict from the spec.
-        section: Which section to look in (e.g. "schemas", "parameters").
+        section: The section name for context (used in logging only).
 
     Returns:
-        The resolved object, or the original object if no $ref present.
+        The resolved object, or the original object if no $ref is present
+        or the ref cannot be resolved.
     """
     ref = obj.get("$ref", "")
     if not ref:
         return obj
 
-    # Patterns:
-    #   #/components/schemas/User
-    #   #/components/parameters/UserId
-    #   #/definitions/User  (Swagger 2.0)
     parts = ref.lstrip("#/").split("/")
     try:
-        if parts[0] == "components":
-            # parts = ["components", "schemas", "User"]
-            resolved = components.get(parts[1], {}).get(parts[2], {})
-        elif parts[0] == "definitions":
-            # parts = ["definitions", "User"]
-            resolved = components.get("schemas", {}).get(parts[1], {})
+        if parts[0] == "components" and len(parts) == 3:
+            # #/components/schemas/User  or  #/components/parameters/UserId
+            resolved = (components.get(parts[1]) or {}).get(parts[2])
+        elif parts[0] == "definitions" and len(parts) == 2:
+            # #/definitions/User  (Swagger 2.0)
+            resolved = (components.get("schemas") or {}).get(parts[1])
         else:
+            log.debug("openapi_unresolved_ref", ref=ref, reason="unrecognised_pattern")
             return obj
+
         return resolved if isinstance(resolved, dict) else obj
-    except (IndexError, KeyError):
+    except (IndexError, KeyError, TypeError):
         log.debug("openapi_unresolved_ref", ref=ref)
         return obj
 
 
 def _parse_location(location_str: str) -> ParameterLocation | None:
-    """Map an OpenAPI 'in' string to a ParameterLocation enum value."""
+    """Map an OpenAPI 'in' field value to a ParameterLocation enum member."""
     mapping = {
         "path": ParameterLocation.PATH,
         "query": ParameterLocation.QUERY,
         "header": ParameterLocation.HEADER,
         "body": ParameterLocation.BODY,
-        # "cookie" is not in our ParameterLocation enum — skip it
+        # "cookie" intentionally omitted — not in our ParameterLocation enum
     }
     return mapping.get(location_str.lower())
 
@@ -522,13 +513,12 @@ def _merge_parameters(
     return list(merged.values())
 
 
-def _extract_example(
-    raw_param: dict[str, Any], schema: dict[str, Any]
-) -> Any:
+def _extract_example(raw_param: dict[str, Any], schema: dict[str, Any]) -> Any:
     """
-    Try to pull an example value from a parameter or its schema.
+    Pull an example value from a parameter definition or its schema.
 
-    Checks in priority order: example, default, schema.example, schema.default.
+    Checks in priority order: param.example, param.default,
+    schema.example, schema.default.
     """
     for key in ("example", "default"):
         val = raw_param.get(key)

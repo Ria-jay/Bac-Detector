@@ -5,17 +5,13 @@ Tests cover PreparedRequest construction, URL resolution, object ID
 substitution, identity auth wiring, and the GET-only filter.
 """
 
-import pytest
 
 from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
 from bac_detector.models.identity import AuthMechanism, IdentityProfile
 from bac_detector.replay.builder import (
-    PreparedRequest,
-    _build_one,
     _resolve_url,
     build_requests,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

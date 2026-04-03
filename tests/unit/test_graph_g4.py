@@ -15,21 +15,12 @@ This file fills the remaining gaps:
 
 from __future__ import annotations
 
-import pytest
-
+from bac_detector.config.loader import GraphAnalysisConfig
 from bac_detector.graph.inference import (
-    _extract_field_values,
-    _ALL_OWNERSHIP_FIELDS,
-    _TENANT_FIELDS,
-    _PRIMARY_OWNERSHIP_FIELDS,
-    _SECONDARY_OWNERSHIP_FIELDS,
+    group_into_families,
     infer_action,
     infer_ownership_for_edge,
-    infer_tenant_for_edge,
     normalize_resource,
-    group_into_families,
-    infer_parent_child,
-    apply_inferences,
 )
 from bac_detector.graph.models import (
     AccessEdge,
@@ -38,16 +29,13 @@ from bac_detector.graph.models import (
     AuthGraph,
     EndpointNode,
     IdentityNode,
-    OwnershipConfidence,
     OwnershipConclusion,
-    ResourceFamily,
+    OwnershipConfidence,
     ResourceKey,
     ResourceNode,
     RoleNode,
 )
 from bac_detector.graph.service import run_graph_analysis
-from bac_detector.config.loader import GraphAnalysisConfig
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -491,7 +479,6 @@ class TestEndToEndGraphConstruction:
 
     def _run_full_pipeline(self):
         from bac_detector.analyzers.matrix import build_matrix
-        from bac_detector.analyzers.baseline import build_baselines
         from bac_detector.discovery.inventory import build_inventory
         from bac_detector.graph.builder import build_graph
         from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
@@ -640,8 +627,8 @@ class TestEndToEndGraphConstruction:
         graph = self._run_full_pipeline()
         # Verify the graph has the right structure for child exposure:
         # alice denied on parent, allowed on child with same object_id
-        from bac_detector.graph.models import AccessOutcome
         from bac_detector.graph.analyzers import analyze_child_resource_exposure
+        from bac_detector.graph.models import AccessOutcome
         parent_ep = "GET /api/orders/{id}"
         child_ep  = "GET /api/orders/{id}/invoice"
         alice_parent = graph.edges_for_identity_endpoint("alice", parent_ep)

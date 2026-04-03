@@ -5,17 +5,17 @@
 
 target:
   # Base URL of the application under test
-  base_url: "http://127.0.0.1:8888"
+  base_url: "https://api.example.com"
 
   # Optional: separate API base if different from the web app base
   # api_base_url: "https://api.example.com/v1"
 
   # Option 1: Provide an OpenAPI/Swagger spec URL or local file path
-  # openapi_url: "https://api.example.com/openapi.json"
+  openapi_url: "https://api.example.com/openapi.json"
   # openapi_url: "./specs/openapi.json"
 
   # Option 2: Provide a plain-text file of endpoints (one per line)
-  endpoint_list_path: "./example/endpoints.txt"
+  # endpoint_list_path: "./examples/endpoints.txt"
 
   # Optional: restrict testing to these URL prefixes only
   # scope_allowlist:
@@ -25,21 +25,23 @@ target:
 # At least two identities are required to compare authorization outcomes.
 # These represent different users or roles in the application.
 identities:
-  - name: Testy
+  - name: alice
     role: user
     auth_mechanism: bearer
-    token: "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0eXlAZW1haWwuY29tIiwiaWF0IjoxNzc1MTQ3MzMxLCJleHAiOjE3NzU3NTIxMzEsInJvbGUiOiJ1c2VyIn0.cxbXeU-92Jx9n6sPiPeoeQKGQ7XYxYmngdyDqoktb2R7grm_WEO2p_FDHAVhKUGPHw-4_7SOFZtoqTEcMLQZeS8a-KvkUmW5by0YR7P8aKTwETwo7DlZDx1AcNFnpGgvu3UtGdq_HcyaZeAmXKDr94oDxU1P-wVEZkAr4J_ZolMQlkdxWVxrKMpoIJ9Vxbh0Tld7XxWqoXdt8j8HdGgtwFltCQ1ovYROcMvXkamGi2vxJ-lxf71o_fJlmdt2a6gGqwVqNPCT5yDAKoMtUk6YgZZmLA99onzG2ZVNV4QzJmnCQcPlB9u1sxeyEu2P9C35l2emxsqJebe1MFYDVEcHAQ"
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.alice_token_here"
     # IDs of objects alice legitimately owns (used to confirm IDOR findings)
     owned_object_ids:
-      - "8"
+      - "101"
+      - "102"
     notes: "Standard free-tier user account"
 
-  - name: testb
+  - name: bob
     role: user
     auth_mechanism: bearer
-    token: "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0YkBlbWFpbC5jb20iLCJpYXQiOjE3NzUxNDkzNDgsImV4cCI6MTc3NTc1NDE0OCwicm9sZSI6InVzZXIifQ.Rq0XPNohk5Saj3fAzuxiYoo2hsfGCzyVHbcEiy6lvBnuresSG5DROVsUC_DAzKAKrKmrnjXSja8gAD4AIM4NUthA_Sw6fMnaIrPlckMsdGniK4qkd56_NAA3TRYb2bPe4zpLyJ7vSxo2FOjr5Gk167mjBglsrBFZqNTvK15rjtdQKs6cMajn1a-JvrPXfUyOWnBuOzSVLNDs-W87v7YwhI3d25zC8NjZ4yIW7MdBbR1hsy5S5VVsZveeYQOcDRqxchRssJqf6zRHz5jbYnxc8V9v_CGWTtGhqpfsYR4gIMjGxnXMdu0QtDkVywL9xlOVyRiG7x03N04TJvcPcgR25A"
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.bob_token_here"
     owned_object_ids:
-      - "9"
+      - "201"
+      - "202"
     notes: "Second standard user — used for cross-user IDOR testing"
 
   - name: admin
@@ -65,10 +67,8 @@ throttle:
   requests_per_second: 2.0
   # Hard cap: stop the scan after this many total requests
   request_budget: 500
-  # Per-request HTTP timeout in seconds
+  # Per-request HTTP timeout
   timeout_seconds: 15.0
-  # Whether to retry a failed request once before recording an error
-  # retry_on_error: false
 
 safety:
   # dry_run: print requests without sending them
@@ -96,42 +96,3 @@ log_config:
   level: "INFO"
   # Set to true to emit structured JSON log lines (useful for log aggregation)
   json_logs: false
-
-# ---------------------------------------------------------------------------
-# HTML crawl settings — Phase 7 (not yet implemented, accepted for future use)
-# ---------------------------------------------------------------------------
-# crawl:
-#   enabled: false
-#   max_depth: 3
-#   max_requests: 100
-#   respect_robots_txt: true
-
-# ---------------------------------------------------------------------------
-# Graph-based authorization analysis (optional)
-# ---------------------------------------------------------------------------
-# Runs after standard detection to find cross-endpoint authorization
-# inconsistencies that request-pair detectors miss:
-#   - child-resource exposure  (parent denied, child allowed)
-#   - hidden privilege paths   (admin sub-action reachable when main is denied)
-#   - sibling action gaps      (denied on one action, allowed on another in same family)
-#   - ownership inconsistencies (response body shows resource belongs to someone else)
-#   - tenant boundary violations (different tenant IDs seen for the same resource)
-#   - partial authorization     (some endpoints in a family protected, others not)
-#
-# Enable by setting enabled: true. All sub-options default to true.
-#
-# graph_analysis:
-#   enabled: true
-#
-#   # Use owner_id / user_id / created_by fields in response bodies to infer ownership
-#   infer_ownership: true
-#
-#   # Detect tenant boundary violations via tenant_id / organization_id fields
-#   infer_tenant_boundaries: true
-#
-#   # Check for admin sub-endpoints reachable when the main admin endpoint is denied
-#   enable_hidden_privilege_path_checks: true
-#
-#   # Minimum confidence for graph findings to appear in output
-#   # Options: low (all findings), medium (confirmed + potential), high (confirmed only)
-#   min_confidence: low

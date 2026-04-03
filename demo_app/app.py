@@ -34,10 +34,9 @@ GET /admin/stats
 
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException, Header
-from typing import Optional
+from fastapi import FastAPI, Header, HTTPException
 
-from demo_app.data import USERS, get_user_by_token, is_admin
+from demo_app.data import USERS, get_user_by_token
 
 app = FastAPI(
     title="BAC Detector Demo API",
@@ -50,7 +49,7 @@ app = FastAPI(
 # Auth helper
 # ---------------------------------------------------------------------------
 
-def _require_auth(authorization: Optional[str]) -> dict:
+def _require_auth(authorization: str | None) -> dict:
     """
     Extract and validate a Bearer token from the Authorization header.
     Returns the user dict or raises 401.
@@ -80,7 +79,7 @@ def health():
 @app.get("/users/{user_id}")
 def get_user(
     user_id: str,
-    authorization: Optional[str] = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
     """
     Return a user's full record.
@@ -99,7 +98,7 @@ def get_user(
 
 @app.get("/me/profile")
 def get_my_profile(
-    authorization: Optional[str] = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
     """
     Return the authenticated user's own profile.
@@ -123,7 +122,7 @@ def get_my_profile(
 
 @app.get("/admin/users")
 def list_all_users(
-    authorization: Optional[str] = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
     """
     Return the full user list.
@@ -138,7 +137,7 @@ def list_all_users(
 
 @app.get("/admin/stats")
 def get_stats(
-    authorization: Optional[str] = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
     """
     Return aggregate statistics.

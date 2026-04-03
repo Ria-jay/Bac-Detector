@@ -5,9 +5,8 @@ Tests cover deduplication, source priority, normalization,
 stats properties, and filter methods.
 """
 
-import pytest
 
-from bac_detector.discovery.inventory import EndpointInventory, build_inventory, _deduplicate
+from bac_detector.discovery.inventory import EndpointInventory, build_inventory
 from bac_detector.models.endpoint import Endpoint, HttpMethod, Parameter, ParameterLocation
 
 BASE_URL = "https://api.example.com"

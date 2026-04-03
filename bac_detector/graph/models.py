@@ -32,8 +32,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
-
 
 # ---------------------------------------------------------------------------
 # Enumerations
@@ -105,8 +103,8 @@ class ResourceKey:
     """
     resource_type: str         # e.g. "orders", "users", "invoices"
     resource_id:   str         # e.g. "1001", "42"
-    parent_key: Optional[str] = None    # "orders:1001" if this is a child resource
-    tenant_id:  Optional[str] = None    # tenant scope, if inferrable
+    parent_key: str | None = None    # "orders:1001" if this is a child resource
+    tenant_id:  str | None = None    # tenant scope, if inferrable
 
     @property
     def key(self) -> str:
@@ -155,7 +153,7 @@ class ResourceNode:
     # e.g. {"owner_id": "22", "tenant_id": "acme", "user_id": "15"}
     attributes: dict[str, str] = field(default_factory=dict)
     # Key of parent resource if this is a child resource (e.g. invoices:99 → orders:1001)
-    parent_resource_key: Optional[str] = None
+    parent_resource_key: str | None = None
 
     @property
     def resource_type(self) -> str:
@@ -174,7 +172,7 @@ class EndpointNode:
     path:         str    # "/api/orders/{id}"
     action:       ActionType = ActionType.UNKNOWN
     # The resource type this endpoint acts on (inferred from path)
-    resource_type: Optional[str] = None
+    resource_type: str | None = None
     # True if the path contains a resource-family parent prefix
     is_child_endpoint: bool = False
 
@@ -201,11 +199,11 @@ class AccessEdge:
     """
     identity_name:  str
     endpoint_key:   str
-    resource_key:   Optional[str]   # "orders:1001" or None if no object_id
+    resource_key:   str | None   # "orders:1001" or None if no object_id
     action:         ActionType
     outcome:        AccessOutcome
     status_code:    int
-    object_id_used: Optional[str]   # raw object_id from the request
+    object_id_used: str | None   # raw object_id from the request
     # Snapshot fields from the ResponseMeta (no circular import)
     body_snippet:   str = ""
     json_keys:      list[str] = field(default_factory=list)
@@ -258,9 +256,9 @@ class OwnershipInference:
     conclusion:       OwnershipConclusion
     confidence:       OwnershipConfidence
     # The response body field that triggered this inference (e.g. "owner_id")
-    matched_field:    Optional[str] = None
+    matched_field:    str | None = None
     # The value extracted from the response body for that field (e.g. "22")
-    matched_value:    Optional[str] = None
+    matched_value:    str | None = None
     # Plain-English explanation of why this conclusion was reached
     rationale:        str = ""
 
@@ -412,7 +410,7 @@ class AuthGraph:
 
     def outcome_for_identity_endpoint(
         self, identity_name: str, endpoint_key: str
-    ) -> Optional[AccessOutcome]:
+    ) -> AccessOutcome | None:
         """
         Return the first recorded outcome for an (identity, endpoint) pair.
         Returns None if no edge exists.
@@ -437,7 +435,7 @@ class AuthGraph:
 
     def best_ownership_inference(
         self, identity_name: str, resource_key: str
-    ) -> Optional[OwnershipInference]:
+    ) -> OwnershipInference | None:
         """
         Return the highest-confidence ownership inference for an (identity, resource) pair.
 

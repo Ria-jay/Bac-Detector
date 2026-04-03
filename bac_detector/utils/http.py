@@ -5,8 +5,8 @@ Provides a configured async HTTP client used by the replay engine.
 All HTTP communication in BAC Detector goes through this client.
 """
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 import httpx
 

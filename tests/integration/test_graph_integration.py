@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import pytest
 
-from bac_detector.analyzers.baseline import build_baselines
 from bac_detector.analyzers.matrix import build_matrix
 from bac_detector.config.loader import GraphAnalysisConfig, ScanConfig
 from bac_detector.discovery.runner import run_discovery

@@ -7,7 +7,6 @@ and ResponseMeta construction from responses.
 """
 
 import pytest
-import pytest_asyncio
 
 from bac_detector.replay.builder import PreparedRequest
 from bac_detector.replay.executor import (
@@ -16,7 +15,6 @@ from bac_detector.replay.executor import (
     _error_meta,
     execute_requests,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

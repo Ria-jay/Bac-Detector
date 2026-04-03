@@ -15,7 +15,6 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from bac_detector.models.identity import AuthMechanism, IdentityProfile
 
-
 # ---------------------------------------------------------------------------
 # Sub-config models
 # ---------------------------------------------------------------------------
@@ -116,7 +115,7 @@ class SafetyConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def lab_mode_requires_explicit_methods(self) -> "SafetyConfig":
+    def lab_mode_requires_explicit_methods(self) -> SafetyConfig:
         write_methods = {"POST", "PUT", "PATCH", "DELETE"}
         has_write_methods = bool(write_methods.intersection(self.enabled_methods))
         if has_write_methods and not self.lab_mode:
@@ -140,7 +139,7 @@ class IdentityConfig(BaseModel):
     notes: str | None = None
 
     @model_validator(mode="after")
-    def bearer_requires_token(self) -> "IdentityConfig":
+    def bearer_requires_token(self) -> IdentityConfig:
         """Catch the common misconfiguration of bearer auth without a token."""
         if self.auth_mechanism == AuthMechanism.BEARER and not self.token:
             raise ValueError(
@@ -278,7 +277,7 @@ class ScanConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def at_least_one_discovery_source(self) -> "ScanConfig":
+    def at_least_one_discovery_source(self) -> ScanConfig:
         has_openapi = self.target.openapi_url is not None
         has_endpoint_list = self.target.endpoint_list_path is not None
         has_crawl = self.crawl.enabled

@@ -17,7 +17,11 @@ from __future__ import annotations
 
 from bac_detector.analyzers.baseline import Baseline
 from bac_detector.analyzers.matrix import AuthMatrix
-from bac_detector.comparators.response import compare_responses, is_likely_nondeterministic
+from bac_detector.comparators.response import (
+    ResponseDiff,
+    compare_responses,
+    is_likely_nondeterministic,
+)
 from bac_detector.detectors.confidence import score_idor_confidence
 from bac_detector.models.finding import Confidence, Evidence, Finding, Severity
 from bac_detector.models.identity import IdentityProfile
@@ -216,7 +220,6 @@ def _warn_unprotected_object_endpoints(
 
             sample = next(iter(resp_map.values()))
             identity_list = ", ".join(f"'{n}'" for n in sorted(resp_map))
-            owner_name = ownership.get(object_id, "unknown")
 
             evidence = Evidence(
                 attacker_identity=sorted(resp_map)[0],
@@ -337,7 +340,7 @@ def _idor_severity(endpoint_key: str, confidence: Confidence) -> Severity:
     return Severity.MEDIUM
 
 
-def _describe_diff(diff: "ResponseDiff", owner_meta: ResponseMeta | None) -> str:
+def _describe_diff(diff: ResponseDiff, owner_meta: ResponseMeta | None) -> str:
     """Build a concise human-readable summary of what was observed."""
     from bac_detector.comparators.response import ResponseDiff  # noqa: F401 — runtime type
 
