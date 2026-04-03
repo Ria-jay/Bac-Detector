@@ -476,12 +476,12 @@ def _resolve_ref(
             resolved = (components.get("schemas") or {}).get(parts[1])
         else:
             log.debug("openapi_unresolved_ref", ref=ref, reason="unrecognised_pattern")
-            return obj
+            return {}
 
-        return resolved if isinstance(resolved, dict) else obj
+        return resolved if isinstance(resolved, dict) else {}
     except (IndexError, KeyError, TypeError):
         log.debug("openapi_unresolved_ref", ref=ref)
-        return obj
+        return {}
 
 
 def _parse_location(location_str: str) -> ParameterLocation | None:
