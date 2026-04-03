@@ -1,0 +1,98 @@
+# BAC Detector — Sample Configuration
+# For authorized security testing only.
+# Copy this file, fill in your target and identity tokens, and run:
+#   bacdet scan --config config.yaml
+
+target:
+  # Base URL of the application under test
+  base_url: "https://api.example.com"
+
+  # Optional: separate API base if different from the web app base
+  # api_base_url: "https://api.example.com/v1"
+
+  # Option 1: Provide an OpenAPI/Swagger spec URL or local file path
+  openapi_url: "https://api.example.com/openapi.json"
+  # openapi_url: "./specs/openapi.json"
+
+  # Option 2: Provide a plain-text file of endpoints (one per line)
+  # endpoint_list_path: "./examples/endpoints.txt"
+
+  # Optional: restrict testing to these URL prefixes only
+  # scope_allowlist:
+  #   - "/api/v1/"
+  #   - "/api/v2/"
+
+# At least two identities are required to compare authorization outcomes.
+# These represent different users or roles in the application.
+identities:
+  - name: alice
+    role: user
+    auth_mechanism: bearer
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.alice_token_here"
+    # IDs of objects alice legitimately owns (used to confirm IDOR findings)
+    owned_object_ids:
+      - "101"
+      - "102"
+    notes: "Standard free-tier user account"
+
+  - name: bob
+    role: user
+    auth_mechanism: bearer
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.bob_token_here"
+    owned_object_ids:
+      - "201"
+      - "202"
+    notes: "Second standard user — used for cross-user IDOR testing"
+
+  - name: admin
+    role: admin
+    auth_mechanism: bearer
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.admin_token_here"
+    notes: "Admin user — used for vertical privilege escalation testing"
+
+  # Cookie-based auth example:
+  # - name: carol
+  #   role: manager
+  #   auth_mechanism: cookie
+  #   cookies:
+  #     session: "abc123sessiontoken"
+
+  # Guest / unauthenticated example:
+  # - name: guest
+  #   role: guest
+  #   auth_mechanism: none
+
+throttle:
+  # Maximum requests per second (across all identities combined)
+  requests_per_second: 2.0
+  # Hard cap: stop the scan after this many total requests
+  request_budget: 500
+  # Per-request HTTP timeout
+  timeout_seconds: 15.0
+
+safety:
+  # dry_run: print requests without sending them
+  dry_run: false
+  # read_only: skip all non-GET requests (recommended default)
+  read_only: true
+  # lab_mode: enable write-operation testing (POST/PUT/PATCH/DELETE)
+  # Only enable in isolated lab environments!
+  lab_mode: false
+  # Methods to test (write methods require lab_mode: true)
+  enabled_methods:
+    - GET
+  # Set to false only for self-signed certs in lab environments
+  verify_ssl: true
+
+output:
+  output_dir: "./results"
+  json_findings_filename: "findings.json"
+  markdown_report_filename: "report.md"
+  overwrite: false
+
+# Logging settings (key is log_config, not logging, to avoid shadowing
+# the Python stdlib logging module name)
+log_config:
+  level: "INFO"
+  # Set to true to emit structured JSON log lines (useful for log aggregation)
+  json_logs: false

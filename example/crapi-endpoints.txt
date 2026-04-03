@@ -1,0 +1,73 @@
+# crAPI — Known API Endpoints
+# Source: OWASP crAPI v1 (https://github.com/OWASP/crAPI)
+# Format: METHOD /path (one per line, comments with #)
+# Use with: endpoint_list_path: ./crapi-endpoints.txt
+
+# ---------------------------------------------------------------------------
+# Identity / Auth
+# ---------------------------------------------------------------------------
+POST /identity/api/auth/signup
+POST /identity/api/auth/login
+POST /identity/api/auth/forget-password
+POST /identity/api/auth/v3/check-otp
+POST /identity/api/auth/v2/user/reset-password
+
+# ---------------------------------------------------------------------------
+# User
+# ---------------------------------------------------------------------------
+GET /identity/api/v2/user/dashboard
+GET /identity/api/v2/user/videos
+PUT /identity/api/v2/user/videos/{video_id}
+DELETE /identity/api/v2/user/videos/{video_id}
+GET /identity/api/v2/user/videos/{video_id}
+POST /identity/api/v2/user/videos/convert_video
+GET /identity/api/v2/user/pictures
+
+# ---------------------------------------------------------------------------
+# Vehicle
+# ---------------------------------------------------------------------------
+GET /identity/api/v2/vehicle/vehicles
+POST /identity/api/v2/vehicle/add_vehicle
+GET /identity/api/v2/vehicle/{vehicle_id}/location
+GET /identity/api/v2/vehicle/{vehicle_id}/qr_code
+POST /identity/api/v2/vehicle/qr_code
+POST /identity/api/v2/vehicle/resend_email
+
+# ---------------------------------------------------------------------------
+# Community / Posts
+# ---------------------------------------------------------------------------
+GET /community/api/v2/community/posts/recent
+GET /community/api/v2/community/posts/{post_id}
+POST /community/api/v2/community/posts
+PUT /community/api/v2/community/posts/{post_id}
+DELETE /community/api/v2/community/posts/{post_id}
+POST /community/api/v2/community/posts/{post_id}/comment
+GET /community/api/v2/community/posts/search
+
+# ---------------------------------------------------------------------------
+# Coupon / Shop
+# ---------------------------------------------------------------------------
+POST /community/api/v2/coupon/validate-coupon
+GET /workshop/api/shop/products
+POST /workshop/api/shop/orders
+GET /workshop/api/shop/orders/all
+GET /workshop/api/shop/orders/{order_id}
+POST /workshop/api/shop/orders/return_order
+
+# ---------------------------------------------------------------------------
+# Workshop / Mechanic
+# ---------------------------------------------------------------------------
+GET /workshop/api/mechanic
+POST /workshop/api/mechanic/mechanic_report
+GET /workshop/api/mechanic/mechanic_report
+GET /workshop/api/mechanic/{mechanic_id}
+POST /workshop/api/mechanic/service_request
+GET /workshop/api/mechanic/service_requests
+GET /workshop/api/mechanic/service_request/{service_id}
+
+# ---------------------------------------------------------------------------
+# Admin (intentionally broken function-level auth in crAPI)
+# ---------------------------------------------------------------------------
+GET /identity/api/v2/admin/users
+GET /identity/api/v2/admin/users/{user_id}
+DELETE /identity/api/v2/admin/users/{user_id}

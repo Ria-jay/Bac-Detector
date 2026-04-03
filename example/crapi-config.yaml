@@ -1,0 +1,55 @@
+# BAC Detector — crAPI Configuration
+# For authorized security testing only.
+# crAPI is an intentionally vulnerable app: https://github.com/OWASP/crAPI
+
+target:
+  base_url: "http://localhost:8888"
+  endpoint_list_path: "./example/crapi-endpoints.txt"
+
+identities:
+  - name: user1
+    role: user
+    auth_mechanism: bearer
+    token: "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0YkBlbWFpbC5jb20iLCJpYXQiOjE3NzUyMjg1NjgsImV4cCI6MTc3NTgzMzM2OCwicm9sZSI6InVzZXIifQ.pqcFdT459KRaASIDZMRZnqji9uHDbTR35OVGJohgWe4-rUDLSAvDuT0vkJQkkyIDDof57cAs58yG-TmsdotovmLO98OTCNFePabhw4ptOj0jkWTD1fDLtzRxmQ0_H8-xTJ6mrcm0SXjXGd-lesvw3CLV4dlbVtUFDvBl4MLYd_H8nh6vXenbEvtsUz0lrLple8jnH2Blbxt2oKZPHC6Yx_MN6LOLOebMPK9SyojCm4A4L4I6BwkcBH4XL47bTTuy2vGdXTDksY3Bo1MkylapW6afQS7aHSqir3zm-xq_va0NP7ENo8SRKVjOfqUUE8rZ8c4rMmBEkADQaDnQf-qvnQ"
+    owned_object_ids:
+      - "f89b68b2-d7bf-4ad9-8946-a2c4cd964214"
+      - "7"
+    notes: "First regular user account"
+
+  - name: user2
+    role: user
+    auth_mechanism: bearer
+    token: "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0eXlAZW1haWwuY29tIiwiaWF0IjoxNzc1MjI5NDMyLCJleHAiOjE3NzU4MzQyMzIsInJvbGUiOiJ1c2VyIn0.EsQpez5UlfPJn3OpVpcNttAuSdZ784fdFhng5Q9rZpkVFNUY6hcKJ3yaKuDDbKMlX-BMBumQWAUUDxDRKzwoex5dJZskpjLLiv5kOItTqxYOmYHgZKRNDjpbpVJJ_jW1D2LoRiamXAhimyd2LlW2B0ddTsSq00tmRyYj4V9tKAg6fENQhzsaAIa7nFJ-WdaeTasH6SIfgL8j4-PuiA0YwoWzSwJC5EXRBniPbv3Tm1gpKxz_tlXwOyBvSx8bUxcpvxgVlxI0FBtpsk1mdzPgACDDo1xcKFnTf3c0XvNmFH5mh3EgZUwFHiow3dswPF_4pw3dyrpBMX0kuZwjC4q8Yw"
+    owned_object_ids:
+      - "72bdc309-fa17-4ed8-8fd4-c60a84c38f3a"
+    notes: "Second regular user — used for cross-user IDOR testing"
+
+throttle:
+  requests_per_second: 5.0
+  request_budget: 500
+  timeout_seconds: 15.0
+
+safety:
+  dry_run: false
+  read_only: true
+  lab_mode: false
+  enabled_methods:
+    - GET
+  verify_ssl: false
+
+output:
+  output_dir: "./crapi-results"
+  json_findings_filename: "findings.json"
+  markdown_report_filename: "report.md"
+  overwrite: true
+
+log_config:
+  level: "INFO"
+  json_logs: false
+
+graph_analysis:
+  enabled: true
+  infer_ownership: true
+  infer_tenant_boundaries: true
+  enable_hidden_privilege_path_checks: true
+  min_confidence: low

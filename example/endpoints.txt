@@ -1,0 +1,25 @@
+# BAC Detector — Explicit Endpoint List
+# Use this file with target.endpoint_list_path in your config.yaml
+#
+# Format: one endpoint per line
+#   METHOD /path
+#
+# Lines starting with # are comments and are ignored.
+# Blank lines are ignored.
+# Path parameters should use {param_name} template syntax.
+
+GET /api/users
+GET /api/users/{user_id}
+GET /api/users/{user_id}/profile
+GET /api/users/{user_id}/orders
+GET /api/orders
+GET /api/orders/{order_id}
+GET /api/orders/{order_id}/items
+GET /api/invoices/{invoice_id}
+GET /api/documents/{document_id}
+GET /api/admin/users
+GET /api/admin/settings
+GET /api/me
+GET /api/me/settings
+GET /api/tenants/{tenant_id}
+GET /api/tenants/{tenant_id}/members

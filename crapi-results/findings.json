@@ -1,0 +1,791 @@
+{
+  "schema_version": "1.0",
+  "tool": "bac-detector",
+  "summary": {
+    "scan_id": "330e13b0-2f26-46a2-8b59-fd6d14472948",
+    "target": "http://localhost:8888",
+    "started_at": "2026-04-03T15:38:23.949446+00:00",
+    "finished_at": "2026-04-03T15:38:33.951410+00:00",
+    "duration_seconds": 10.0,
+    "endpoints_discovered": 41,
+    "discovery_sources": [
+      "endpoint_list"
+    ],
+    "requests_made": 48,
+    "requests_errored": 0,
+    "identities_tested": [
+      "user1",
+      "user2"
+    ],
+    "total_findings": 5,
+    "findings_by_severity": {
+      "high": 3,
+      "medium": 2
+    },
+    "findings_by_category": {
+      "IDOR": 1,
+      "graph_sibling_inconsistency": 2,
+      "vertical_escalation": 2
+    },
+    "confirmed_findings": 1,
+    "potential_findings": 4
+  },
+  "scan_result": {
+    "scan_id": "330e13b0-2f26-46a2-8b59-fd6d14472948",
+    "target": "http://localhost:8888",
+    "status": "completed",
+    "started_at": "2026-04-03T15:38:23.949446Z",
+    "finished_at": "2026-04-03T15:38:33.951410Z",
+    "endpoints_discovered": 41,
+    "discovery_sources_used": [
+      "endpoint_list"
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/identity/api/auth/signup",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/auth/login",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/auth/forget-password",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/auth/v3/check-otp",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/auth/v2/user/reset-password",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/user/dashboard",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/user/videos",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "PUT",
+        "path": "/identity/api/v2/user/videos/{video_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "video_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/identity/api/v2/user/videos/{video_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "video_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/user/videos/{video_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "video_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/v2/user/videos/convert_video",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/user/pictures",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/vehicle/vehicles",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/v2/vehicle/add_vehicle",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/vehicle/{vehicle_id}/location",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/vehicle/{vehicle_id}/qr_code",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/v2/vehicle/qr_code",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/identity/api/v2/vehicle/resend_email",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/community/api/v2/community/posts/recent",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/community/api/v2/community/posts/{post_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "post_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/community/api/v2/community/posts",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "PUT",
+        "path": "/community/api/v2/community/posts/{post_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "post_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/community/api/v2/community/posts/{post_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "post_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/community/api/v2/community/posts/{post_id}/comment",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "post_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/community/api/v2/community/posts/search",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/community/api/v2/coupon/validate-coupon",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/shop/products",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/workshop/api/shop/orders",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/shop/orders/all",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/shop/orders/{order_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "order_id",
+            "location": "path",
+            "likely_object_id": true,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/workshop/api/shop/orders/return_order",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/mechanic",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/workshop/api/mechanic/mechanic_report",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/mechanic/mechanic_report",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/mechanic/{mechanic_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "mechanic_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "POST",
+        "path": "/workshop/api/mechanic/service_request",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/mechanic/service_requests",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/workshop/api/mechanic/service_request/{service_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "service_id",
+            "location": "path",
+            "likely_object_id": false,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/admin/users",
+        "base_url": "http://localhost:8888",
+        "parameters": [],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "GET",
+        "path": "/identity/api/v2/admin/users/{user_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "user_id",
+            "location": "path",
+            "likely_object_id": true,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      },
+      {
+        "method": "DELETE",
+        "path": "/identity/api/v2/admin/users/{user_id}",
+        "base_url": "http://localhost:8888",
+        "parameters": [
+          {
+            "name": "user_id",
+            "location": "path",
+            "likely_object_id": true,
+            "example_value": null,
+            "required": true,
+            "schema_type": null
+          }
+        ],
+        "source": "endpoint_list",
+        "tags": [],
+        "summary": null
+      }
+    ],
+    "requests_made": 48,
+    "requests_errored": 0,
+    "identities_tested": [
+      "user1",
+      "user2"
+    ],
+    "findings": [
+      {
+        "id": "a7834b21-be78-42da-b742-052738b25337",
+        "title": "IDOR: user2 accessed user1's object at /workshop/api/shop/orders/{order_id}",
+        "category": "IDOR",
+        "severity": "high",
+        "confidence": "confirmed",
+        "endpoint_key": "GET /workshop/api/shop/orders/{order_id}",
+        "endpoint_url": "http://localhost:8888/workshop/api/shop/orders/7",
+        "http_method": "GET",
+        "evidence": {
+          "attacker_identity": "user2",
+          "victim_identity": "user1",
+          "object_id": "7",
+          "attacker_status_code": 200,
+          "victim_status_code": 200,
+          "attacker_body_snippet": "{\"order\":{\"id\":7,\"user\":{\"email\":\"testb@email.com\",\"number\":\"0987654322\"},\"product\":{\"id\":2,\"name\":\"Wheel\",\"price\":\"10.00\",\"image_url\":\"images/wheel.svg\"},\"quantity\":1,\"status\":\"return pending\",\"transaction_id\":\"30ae46b9-8ac3-4bf7-bceb-d409cda51c95\",\"creat",
+          "attacker_body_hash": "5795bcd56262e469",
+          "diff_summary": "Non-owner received HTTP 200. Owner received HTTP 200. Response bodies are identical to owner's response.",
+          "requested_url": "http://localhost:8888/workshop/api/shop/orders/7"
+        },
+        "description": "Identity 'user2' successfully accessed object ID '7' at /workshop/api/shop/orders/{order_id}, which is owned by identity 'user1'. The server returned HTTP 200 without enforcing object-level ownership verification.",
+        "reproduction_steps": [
+          "Authenticate as 'user2' using its configured credentials.",
+          "Send GET http://localhost:8888/workshop/api/shop/orders/7",
+          "Observe HTTP 200 response with resource data.",
+          "Compare response to what 'user1' receives for the same request."
+        ],
+        "why_bac": "The application returns a successful response to a non-owner identity without verifying that the requesting user has ownership or delegated access to the requested object. This is a direct violation of object-level authorization (OWASP API Security Top 10: API1 - BOLA).",
+        "business_impact": "Any authenticated user may be able to access, read, or enumerate data belonging to other users. Depending on the data at this endpoint, this could expose PII, financial records, or other sensitive information.",
+        "remediation": "Implement per-request ownership verification: before returning a resource, confirm the authenticated user's identity matches the resource owner, or that an explicit permission delegation exists. Do not rely solely on authentication \u2014 also enforce authorization at the object level.",
+        "created_at": "2026-04-03T15:38:33.930502"
+      },
+      {
+        "id": "261c995f-8763-422e-a816-cbbe86d416de",
+        "title": "Vertical escalation: 'user' role accessed privileged endpoint /identity/api/v2/user/dashboard",
+        "category": "vertical_escalation",
+        "severity": "high",
+        "confidence": "potential",
+        "endpoint_key": "GET /identity/api/v2/user/dashboard",
+        "endpoint_url": "http://localhost:8888/identity/api/v2/user/dashboard",
+        "http_method": "GET",
+        "evidence": {
+          "attacker_identity": "user1",
+          "victim_identity": null,
+          "object_id": null,
+          "attacker_status_code": 200,
+          "victim_status_code": null,
+          "attacker_body_snippet": "{\"id\":9,\"name\":\"TestB\",\"email\":\"testb@email.com\",\"number\":\"0987654322\",\"picture_url\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/7QAwUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAABMcAnQAB1BpY29DVEYcAgAAAgAEAP/hC/lodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2t",
+          "attacker_body_hash": "cae2ed13c914a311",
+          "diff_summary": "'user1' (user) received HTTP 200. No higher-privilege baseline available.",
+          "requested_url": "http://localhost:8888/identity/api/v2/user/dashboard"
+        },
+        "description": "Identity 'user1' with role 'user' successfully accessed /identity/api/v2/user/dashboard, which appears to be a privileged endpoint. The expected behavior is that only a privileged identity should have access.",
+        "reproduction_steps": [
+          "Authenticate as 'user1' using its configured credentials.",
+          "Send GET http://localhost:8888/identity/api/v2/user/dashboard",
+          "Observe HTTP 200 response \u2014 expected 401 or 403."
+        ],
+        "why_bac": "The application does not enforce role-based access control on this endpoint. A low-privileged identity received a successful response on a path reserved for privileged roles. This constitutes vertical privilege escalation (OWASP API Security Top 10: API5 - Broken Function Level Authorization).",
+        "business_impact": "Low-privileged users may be able to access administrative functionality, view privileged data, or perform actions reserved for admin roles. This could lead to full account takeover or data breach in severe cases.",
+        "remediation": "Implement role-based access control (RBAC) checks at the function/endpoint level. Verify the authenticated user's role before processing the request. Consider using middleware or decorators to enforce role requirements consistently across all privileged endpoints.",
+        "created_at": "2026-04-03T15:38:33.931080"
+      },
+      {
+        "id": "d823bbd1-28d4-4abb-90bd-278b7a24ceb4",
+        "title": "Vertical escalation: 'user' role accessed privileged endpoint /identity/api/v2/user/dashboard",
+        "category": "vertical_escalation",
+        "severity": "high",
+        "confidence": "potential",
+        "endpoint_key": "GET /identity/api/v2/user/dashboard",
+        "endpoint_url": "http://localhost:8888/identity/api/v2/user/dashboard",
+        "http_method": "GET",
+        "evidence": {
+          "attacker_identity": "user2",
+          "victim_identity": null,
+          "object_id": null,
+          "attacker_status_code": 200,
+          "victim_status_code": null,
+          "attacker_body_snippet": "{\"id\":8,\"name\":\"Testy\",\"email\":\"testyy@email.com\",\"number\":\"0987654321\",\"picture_url\":null,\"video_url\":null,\"video_name\":null,\"available_credit\":90.0,\"video_id\":0,\"role\":\"ROLE_USER\"}",
+          "attacker_body_hash": "0a646a20180e5491",
+          "diff_summary": "'user2' (user) received HTTP 200. No higher-privilege baseline available.",
+          "requested_url": "http://localhost:8888/identity/api/v2/user/dashboard"
+        },
+        "description": "Identity 'user2' with role 'user' successfully accessed /identity/api/v2/user/dashboard, which appears to be a privileged endpoint. The expected behavior is that only a privileged identity should have access.",
+        "reproduction_steps": [
+          "Authenticate as 'user2' using its configured credentials.",
+          "Send GET http://localhost:8888/identity/api/v2/user/dashboard",
+          "Observe HTTP 200 response \u2014 expected 401 or 403."
+        ],
+        "why_bac": "The application does not enforce role-based access control on this endpoint. A low-privileged identity received a successful response on a path reserved for privileged roles. This constitutes vertical privilege escalation (OWASP API Security Top 10: API5 - Broken Function Level Authorization).",
+        "business_impact": "Low-privileged users may be able to access administrative functionality, view privileged data, or perform actions reserved for admin roles. This could lead to full account takeover or data breach in severe cases.",
+        "remediation": "Implement role-based access control (RBAC) checks at the function/endpoint level. Verify the authenticated user's role before processing the request. Consider using middleware or decorators to enforce role requirements consistently across all privileged endpoints.",
+        "created_at": "2026-04-03T15:38:33.931326"
+      },
+      {
+        "id": "05455490-3a21-49d7-9bbd-76a6661a0f91",
+        "title": "Inconsistent protection: 'user1' denied read but allowed list on 'mechanic'",
+        "category": "graph_sibling_inconsistency",
+        "severity": "medium",
+        "confidence": "potential",
+        "endpoint_key": "GET /workshop/api/mechanic",
+        "endpoint_url": "GET /workshop/api/mechanic",
+        "http_method": "GET",
+        "evidence": {
+          "attacker_identity": "user1",
+          "victim_identity": null,
+          "object_id": null,
+          "attacker_status_code": 200,
+          "victim_status_code": 404,
+          "attacker_body_snippet": "",
+          "attacker_body_hash": "graph_inference",
+          "diff_summary": "'user1' was DENIED read on 'GET /workshop/api/mechanic/{mechanic_id}' (HTTP 404) but ALLOWED list on 'GET /workshop/api/mechanic' (HTTP 200) within the same 'mechanic' resource family.",
+          "requested_url": "GET /workshop/api/mechanic"
+        },
+        "description": "Identity 'user1' is denied access to 'GET /workshop/api/mechanic/{mechanic_id}' (read) but is allowed to perform 'list' on a sibling endpoint 'GET /workshop/api/mechanic' within the same 'mechanic' resource family. This suggests authorization is applied inconsistently across actions on the same resource.",
+        "reproduction_steps": [
+          "Authenticate as 'user1'.",
+          "Send GET /workshop/api/mechanic/{mechanic_id} \u2014 observe HTTP 404 (denied).",
+          "Send GET /workshop/api/mechanic \u2014 observe HTTP 200 (allowed).",
+          "Both requests act on the same resource family. One should be at least as restricted as the other."
+        ],
+        "why_bac": "Authorization controls should be applied consistently across all actions within the same resource family. Allowing a more sensitive or equivalent action while denying a less sensitive one often indicates missing or incomplete authorization checks.",
+        "business_impact": "An attacker may exploit the allowed action to access or modify data they should not have access to, bypassing the denied action's intended protection.",
+        "remediation": "Review authorization logic for all endpoints in the 'mechanic' resource family. Ensure that the same ownership and role checks are applied consistently across all actions. Consider centralizing authorization logic for the resource family.",
+        "created_at": "2026-04-03T15:38:33.949018"
+      },
+      {
+        "id": "22e0d01c-e766-4aad-b341-9b9628002c2b",
+        "title": "Inconsistent protection: 'user2' denied read but allowed list on 'mechanic'",
+        "category": "graph_sibling_inconsistency",
+        "severity": "medium",
+        "confidence": "potential",
+        "endpoint_key": "GET /workshop/api/mechanic",
+        "endpoint_url": "GET /workshop/api/mechanic",
+        "http_method": "GET",
+        "evidence": {
+          "attacker_identity": "user2",
+          "victim_identity": null,
+          "object_id": null,
+          "attacker_status_code": 200,
+          "victim_status_code": 404,
+          "attacker_body_snippet": "",
+          "attacker_body_hash": "graph_inference",
+          "diff_summary": "'user2' was DENIED read on 'GET /workshop/api/mechanic/{mechanic_id}' (HTTP 404) but ALLOWED list on 'GET /workshop/api/mechanic' (HTTP 200) within the same 'mechanic' resource family.",
+          "requested_url": "GET /workshop/api/mechanic"
+        },
+        "description": "Identity 'user2' is denied access to 'GET /workshop/api/mechanic/{mechanic_id}' (read) but is allowed to perform 'list' on a sibling endpoint 'GET /workshop/api/mechanic' within the same 'mechanic' resource family. This suggests authorization is applied inconsistently across actions on the same resource.",
+        "reproduction_steps": [
+          "Authenticate as 'user2'.",
+          "Send GET /workshop/api/mechanic/{mechanic_id} \u2014 observe HTTP 404 (denied).",
+          "Send GET /workshop/api/mechanic \u2014 observe HTTP 200 (allowed).",
+          "Both requests act on the same resource family. One should be at least as restricted as the other."
+        ],
+        "why_bac": "Authorization controls should be applied consistently across all actions within the same resource family. Allowing a more sensitive or equivalent action while denying a less sensitive one often indicates missing or incomplete authorization checks.",
+        "business_impact": "An attacker may exploit the allowed action to access or modify data they should not have access to, bypassing the denied action's intended protection.",
+        "remediation": "Review authorization logic for all endpoints in the 'mechanic' resource family. Ensure that the same ownership and role checks are applied consistently across all actions. Consider centralizing authorization logic for the resource family.",
+        "created_at": "2026-04-03T15:38:33.949062"
+      }
+    ],
+    "auth_matrix": {
+      "GET /identity/api/v2/user/dashboard": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /identity/api/v2/user/videos": {
+        "user1": 405,
+        "user2": 405
+      },
+      "GET /identity/api/v2/user/videos/{video_id}": {
+        "user1": 400,
+        "user2": 400
+      },
+      "GET /identity/api/v2/user/pictures": {
+        "user1": 405,
+        "user2": 405
+      },
+      "GET /identity/api/v2/vehicle/vehicles": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /identity/api/v2/vehicle/{vehicle_id}/location": {
+        "user1": 400,
+        "user2": 400
+      },
+      "GET /identity/api/v2/vehicle/{vehicle_id}/qr_code": {
+        "user1": 400,
+        "user2": 400
+      },
+      "GET /community/api/v2/community/posts/recent": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /community/api/v2/community/posts/{post_id}": {
+        "user1": 400,
+        "user2": 400
+      },
+      "GET /community/api/v2/community/posts/search": {
+        "user1": 400,
+        "user2": 400
+      },
+      "GET /workshop/api/shop/products": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /workshop/api/shop/orders/all": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /workshop/api/shop/orders/{order_id}": {
+        "user1": 404,
+        "user2": 404
+      },
+      "GET /workshop/api/mechanic": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /workshop/api/mechanic/mechanic_report": {
+        "user1": 500,
+        "user2": 500
+      },
+      "GET /workshop/api/mechanic/{mechanic_id}": {
+        "user1": 404,
+        "user2": 404
+      },
+      "GET /workshop/api/mechanic/service_requests": {
+        "user1": 200,
+        "user2": 200
+      },
+      "GET /workshop/api/mechanic/service_request/{service_id}": {
+        "user1": 404,
+        "user2": 404
+      },
+      "GET /identity/api/v2/admin/users": {
+        "user1": 404,
+        "user2": 404
+      },
+      "GET /identity/api/v2/admin/users/{user_id}": {
+        "user1": 404,
+        "user2": 404
+      }
+    },
+    "errors": [],
+    "warnings": []
+  }
+}

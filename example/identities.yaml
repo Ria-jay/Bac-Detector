@@ -1,0 +1,38 @@
+# BAC Detector — Sample Identity Profiles
+# This is an example only. In practice, define identities inside config.yaml.
+# Tokens shown here are placeholders — replace with real test tokens.
+
+identities:
+  - name: alice
+    role: user
+    auth_mechanism: bearer
+    token: "REPLACE_WITH_ALICE_TOKEN"
+    owned_object_ids:
+      - "101"
+      - "102"
+    notes: "Standard free-tier user"
+
+  - name: bob
+    role: user
+    auth_mechanism: bearer
+    token: "REPLACE_WITH_BOB_TOKEN"
+    owned_object_ids:
+      - "201"
+    notes: "Second standard user for cross-identity testing"
+
+  - name: manager
+    role: manager
+    auth_mechanism: bearer
+    token: "REPLACE_WITH_MANAGER_TOKEN"
+    notes: "Team manager — can see team members' data but not other teams"
+
+  - name: admin
+    role: admin
+    auth_mechanism: bearer
+    token: "REPLACE_WITH_ADMIN_TOKEN"
+    notes: "Platform admin — full access expected"
+
+  - name: guest
+    role: guest
+    auth_mechanism: none
+    notes: "Unauthenticated request — used to test missing authentication checks"
